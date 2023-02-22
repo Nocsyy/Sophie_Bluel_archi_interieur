@@ -551,46 +551,6 @@ figure #mod {
 	
 }
 
-/*test
-
-.modal {
-	width: 800px;
-	display: flex;
-	background-color: #D65353;
-	opacity: 0.5;
-
-}
-.modal-container {
-	width: 400px;
-	display: none;
-	background-color: #306685;
-}
-.modal-container.active {
-	display: block;	
- }
-.modalctn1.a {
-	display: block;	
- }
-.modalctn1{
-	
-	width: 400px;
-}
-
-.modalctn2 {
-	width: 400px;
-	display: hidden;
-
-}
-.overlay {
-	position: absolute;
-	margin: 0,0,0,0;
-	width: 100%;
-	height: 100%;
-	background-color: #000000;
-	opacity: 30%;
-
-}
-*/
 .modal-container{
 	display: none;
 	position: fixed;
