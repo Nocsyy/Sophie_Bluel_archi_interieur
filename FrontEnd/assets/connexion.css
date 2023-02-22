@@ -1,7 +1,4 @@
-body{
-    
-    background:;
-}
+
 
 .h3Login{
     font-weight: 700;
@@ -24,7 +21,6 @@ body{
     margin-bottom: 7px;
 }
 #login label {
-   margin-left:;
     margin-bottom: 6px;
 }
 .inputMail, .inputPassword {
