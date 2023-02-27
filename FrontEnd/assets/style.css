@@ -131,7 +131,7 @@ nav button:hover{
 	display: flex;
 	align-items: center;
 }
-#introduction figure {
+#introduction .imgSB {
 	flex: 1
 	
 }
@@ -255,8 +255,8 @@ footer nav ul {
 	font-weight: 400;
 	
 }
-figure #mod {
-	margin-left: 50px;
+.imgSB #mod {
+	margin-left: 55px;
 }
 
 .h2-edit {
@@ -348,7 +348,8 @@ figure #mod {
 #photoEdit{
 	display: flex;
 	flex-flow: row wrap;
-	justify-content: space-between;
+	justify-content: flex-start;
+
 }
 
 .rowImg {
@@ -369,6 +370,7 @@ figure #mod {
 	width: 18%;
 	height: 115px;
 	margin-bottom: 10px;
+	margin-right: 2%;
 }
 .figColumn figcaption {
 	display: flex;
@@ -396,10 +398,12 @@ figure #mod {
 	border-radius: 60px;
 }
 .btnValider {
+	background-color: #A7A7A7;
     margin-left: auto;
     margin-right: auto;
 	margin-top: 0;
 }
+
 
 .btnDeleteImg{
 	margin-top: 5%;

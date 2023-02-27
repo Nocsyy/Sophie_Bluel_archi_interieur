@@ -16,6 +16,7 @@ function checkAuth(){
   btnLogout.innerText = "Logout";
   btnLogout.addEventListener("click", logout);
   loginLogout.appendChild(btnLogout);
+  
  }
  else {
   loginLogout.innerHTML=" <a href='./login.html'>login</a>";
@@ -29,6 +30,84 @@ const successFetchWorks = (response) => {
   return response.json();
 };
 
+function createPage1 () {
+     
+  fetch(apiWorksUrl)
+  .catch(catchError)
+  .then(successFetchWorks)
+  .then((works)=>{
+    for (let i = 0; i < works.length; i++) {
+      const work = works[i];
+      const photoEdit = document.querySelector("#photoEdit");
+      const figColumn = document.createElement("figure");
+      figColumn.className="figColumn";
+      photoEdit.appendChild(figColumn);
+      const img = document.createElement("img");
+      const imageId = work.id;  
+      img.className="imgModal";
+      img.src = work.imageUrl;
+      figColumn.appendChild(img);
+      const figImg = document.createElement("figcaption");
+      figImg.innerText="éditer";
+      figColumn.appendChild(figImg);
+      
+      
+      const deleteOneImg = document.createElement("button");
+      deleteOneImg.className = "deleteOneImg";
+      figColumn.appendChild(deleteOneImg);
+      const iconDeleteOneImg = document.createElement("i");
+      iconDeleteOneImg.className="fa-solid fa-trash-can fa-1x iconTrash";
+      deleteOneImg.appendChild(iconDeleteOneImg);
+      const figureImg = document.querySelector(".figureImg");
+      
+      const images = document.querySelectorAll(`img[src="${img.src}"]`);
+    deleteOneImg.addEventListener("click", function() {
+      images.forEach((image) => {
+        const figure = image.closest("figure");
+        if (figure) {
+          figure.remove();
+        }
+      });
+      function deleteImg() {
+        const figures = document.querySelectorAll("figure");
+        const figuresArray = Array.from(figures); 
+        figuresArray.forEach((figure) => {
+          const image = figure.querySelector("img");
+          if (!image) {
+            figure.remove();
+          }
+        });
+      }
+      
+    deleteImg();
+      figColumn.remove();
+      
+     
+    fetch (`${apiWorksUrl}/${imageId}`, {
+      method: "DELETE",
+      headers: {
+        "authorization": `Bearer ${localStorage.getItem("projet3")}`,
+      }
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(response.statusText);
+        }
+        return response.json();
+      })
+      .then(data => {
+        
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  });
+ 
+    }
+    
+  });  
+  
+  }
 function checkAdmin (){
   const userId = localStorage.getItem("idProjet3");
   console.log("ID de l'utilisateur : " + userId);
@@ -40,7 +119,11 @@ function checkAdmin (){
   if (userId === "1"){
     function toggleModal(){
   modaleContainer.classList.toggle("active");
+  modal.style.transform = "translate(-25%, -50%)";
+  
+  
 }
+const btnFilter = document.querySelector(".btn-ctr").style.display="none";
     for (let i = 0; i < modale.length; i++) {
       
       const iconBtnEdit = document.createElement("i");
@@ -63,90 +146,13 @@ function checkAdmin (){
       });
       
 
-    function createPage1 () {
-      
-    fetch(apiWorksUrl)
-    .catch(catchError)
-    .then(successFetchWorks)
-    .then((works)=>{
-      for (let i = 0; i < works.length; i++) {
-        const work = works[i];
-        const photoEdit = document.querySelector("#photoEdit");
-        const figColumn = document.createElement("figure");
-        figColumn.className="figColumn";
-        photoEdit.appendChild(figColumn);
-        const img = document.createElement("img");
-        const imageId = work.id;  
-        img.className="imgModal";
-        img.src = work.imageUrl;
-        figColumn.appendChild(img);
-        const figImg = document.createElement("figcaption");
-        figImg.innerText="éditer";
-        figColumn.appendChild(figImg);
-        
-        
-        const deleteOneImg = document.createElement("button");
-        deleteOneImg.className = "deleteOneImg";
-        figColumn.appendChild(deleteOneImg);
-        const iconDeleteOneImg = document.createElement("i");
-        iconDeleteOneImg.className="fa-solid fa-trash-can fa-1x iconTrash";
-        deleteOneImg.appendChild(iconDeleteOneImg);
-
-        
-      deleteOneImg.addEventListener("click", function() {
-      fetch (`${apiWorksUrl}/${imageId}`, {
-        method: "DELETE",
-        headers: {
-          "authorization": `Bearer ${localStorage.getItem("projet3")}`,
-        }
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(response.statusText);
-          }
-          return response.json();
-        })
-        .then(data => {
-          figColumn.remove();
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    });
-      }
-      const btnDeleteImg = document.querySelector(".btnDeleteImg");
-      btnDeleteImg.addEventListener("click", function(){
-        fetch (apiWorksUrl, {
-          method: "DELETE",
-          headers: {
-            "authorization": `Bearer ${localStorage.getItem("projet3")}`,
-          }
-        })
-          .then(response => {
-            if (!response.ok) {
-              throw new Error(response.statusText);
-            }
-            return response.json();
-          })
-          .then(data => {
-            const images = document.querySelectorAll("img.imgModal");
-          images.forEach(image => {
-          image.imgModal.remove();
-          })
-          .catch(error => {
-            console.error(error);
-          });
-        
-      });
-  
-    });
     
-    });  
-    }
+
     createPage1();
   function createPage2 (){
       const modalctn = document.querySelector(".modalctn2");
       const modal = document.querySelector(".modal");
+      let imgSource = ""; 
         
       const titleAddImg = document.createElement("h2");
       titleAddImg.textContent="Ajout photo";
@@ -181,6 +187,7 @@ function checkAdmin (){
         reader.onload = function(e) {
           const preview = document.createElement("img");
           preview.src = e.target.result;
+          imageSource = e.target.result;
           preview.className="preview";
           modalctn.appendChild(preview);
         };
@@ -238,13 +245,20 @@ function checkAdmin (){
       
       const form = document.querySelector('.formAddImg');
       
+      btnValider.addEventListener("mouseover", function() {
+        btnValider.style.backgroundColor = "#1D6154";
+      });
+    
+      btnValider.addEventListener("mouseout", function() {
+        btnValider.style.backgroundColor = "#A7A7A7";
+      });
       
       formAddImg.addEventListener('submit', (event) => {
-        event.preventDefault();
         
+        event.preventDefault();
+        if(inputAddTitle.value && select.value && imageFile) {
         const formData = new FormData();
         formData.append("image",  new Blob([imageFile], { type: 'application/octet-stream' }));
-        console.log(imageFile);
         formData.append('title', inputAddTitle.value);
         formData.append('category', select.value);
        fetch(apiWorksUrl , {
@@ -256,13 +270,92 @@ function checkAdmin (){
         })
           .then(response => response.json())
           .then(data => {
+            alert("Photo ajoutée avec succès");
+            formAddImg.reset();
+            function resetImageInput() {
+                const preview = document.querySelector(".preview");
+                if (preview !== null) {
+                  preview.remove();
+                
+                }
+                imageFile = "";
+                   
+              }
+              
+            modal.style.transform = "translate(-25%, -50%)";
+
+            const imageId = data.id;
+            function createNewImgModal (){ 
             console.log(data);
+            const photoEdit = document.querySelector("#photoEdit");
+            const figColumn = document.createElement("figure");
+            figColumn.className="figColumn";
+            photoEdit.appendChild(figColumn);
+            const imgModal = document.createElement("img"); 
+            imgModal.src = imageSource;
+            imgModal.alt = data.title;
+            figColumn.appendChild(imgModal);
+            const figImg = document.createElement("figcaption");
+            figImg.innerText="éditer";
+            figColumn.appendChild(figImg);
+            const deleteOneImg = document.createElement("button");
+            deleteOneImg.className = "deleteOneImg";
+            figColumn.appendChild(deleteOneImg);
+            const iconDeleteOneImg = document.createElement("i");
+            iconDeleteOneImg.className="fa-solid fa-trash-can fa-1x iconTrash";
+            deleteOneImg.appendChild(iconDeleteOneImg);
+            
+            const img = document.createElement("img"); 
+            const figure = document.createElement("figure");
+                img.src = imageSource;
+                figure.appendChild(img);
+                const figcaption = document.createElement("figcaption");
+                figcaption.innerText = data.title;
+                figure.appendChild(img);
+                figure.appendChild(figcaption);
+                worksListCtnr.appendChild(figure);
+
+            deleteOneImg.addEventListener("click", function() { 
+                
+                figColumn.remove();
+                figure.remove();
+                fetch (`${apiWorksUrl}/${imageId}`, {
+                  method: "DELETE",
+                  headers: {
+                    "authorization": `Bearer ${localStorage.getItem("projet3")}`,
+                  }
+                })
+                  .then(response => {
+                    if (!response.ok) {
+                      throw new Error(response.statusText);
+                    }
+                    return response.json();
+                  })
+                  .then(data => {
+                  })
+                  .catch(error => {
+                    console.error(error);
+                  });
+               })
+               
+            }   
+            
+            toggleModal();
+            createNewImgModal();
+            resetImageInput();
+            
           })
+         
           .catch(error => {
             console.error(error);
+            
           });
           
-      });
+        } else {
+            alert("Veuillez remplir tous les champs");
+          }
+       })
+         
     }
 
 const btnBack = document.querySelector(".btnBack");
@@ -270,35 +363,8 @@ btnBack.addEventListener("click", function() {
     modal.style.transform = "translate(-25%, -50%)";
 });
 
-function addImg (){ 
 
-const form = document.querySelector('.formAddImg');
-formAddImg.addEventListener('submit', (event) => {
-  event.preventDefault();
-  
-  const formData = new FormData();
-  formData.append("image",  new Blob([imageFile], { type: 'application/octet-stream' }));
-  console.log(imageFile);
-  formData.append('title', inputAddTitle.value);
-  formData.append('category', select.value);
- fetch(apiWorksUrl , {
-    method: 'POST',
-    body: formData,
-    headers: {
-      "authorization": `Bearer ${localStorage.getItem("projet3")}`,
-    }
-  })
-    .then(response => response.json())
-    .then(data => {
-      console.log(data);
-    })
-    .catch(error => {
-      console.error(error);
-    });
-    
-});
 
-}
 createPage2();
 }
 
@@ -329,7 +395,6 @@ fetch(apiWorksUrl)
     for (let i = 0; i < works.length; i++) {
       const work = works[i];
       const figure = document.createElement("figure");
-
       const img = document.createElement("img");
       img.src = work.imageUrl;
       img.alt = work.title;
@@ -339,6 +404,7 @@ fetch(apiWorksUrl)
       figcaption.innerText = work.title;
       figure.appendChild(figcaption);
       worksListCtnr.appendChild(figure);
+      
     }
 
     function filterTous() {
@@ -375,7 +441,7 @@ fetch(apiWorksUrl)
       for (let i = 0; i < filteredWorks.length; i++) {
         const work = filteredWorks[i];
         const figure = document.createElement("figure");
-
+        figure.className="figureImg";
         const img = document.createElement("img");
         img.src = work.imageUrl;
         img.alt = work.title;
@@ -385,11 +451,14 @@ fetch(apiWorksUrl)
         figcaption.innerText = work.title;
         figure.appendChild(figcaption);
         worksListCtnr.appendChild(figure);
+       
       }
     }
     updateWorksList(works);
-  });
+  }); 
 
+  
 
-  checkAuth();
-  checkAdmin();
+checkAuth();
+checkAdmin();
+
